@@ -1,7 +1,9 @@
 package sessions
 
 import (
+	"github.com/gin-gonic/gin"
 	"gopkg.in/boj/redistore.v1"
+	"postgraduate-pm-backend/database"
 )
 
 var client *redistore.RediStore
@@ -27,4 +29,22 @@ func SessionInit() error {
 
 func GetSessionClient() *redistore.RediStore {
 	return client
+}
+
+func GetUserIdentityNumberBySession(c *gin.Context) string {
+	session, _ := client.Get(c.Request, "dotcomUser")
+	ret, ok := session.Values["identityNumber"]
+	if !ok {
+		return ""
+	}
+	return ret.(string)
+}
+
+func GetUserInfoBySession(c *gin.Context) *database.User {
+	currentUserIdentityNumber := GetUserIdentityNumberBySession(c)
+	counsellor, err := database.GetUserByIdentityNumber(currentUserIdentityNumber)
+	if err != nil {
+		return nil
+	}
+	return counsellor
 }

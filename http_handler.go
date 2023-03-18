@@ -13,4 +13,16 @@ func httpHandlerInit() {
 	r.Use(middleware.Cors())
 
 	r.GET("/ping", service.Ping)
+
+	r.PUT("/image_upload", service.ImageUpload)
+
+	authGroup := r.Group("/auth")
+	{
+		authGroup.POST("/login", service.Login)
+		authGroup.POST("/logout", service.Logout)
+		authGroup.GET("/me", middleware.AuthMiddleWare(), service.Me)
+		//authGroup.POST("/me", middleware.AuthMiddleWare(), service.PostMe)
+		authGroup.POST("/password", middleware.AuthMiddleWare(), service.ChangePassword)
+		authGroup.POST("/avatar_upload", middleware.AuthMiddleWare(), service.AvatarUpload)
+	}
 }
