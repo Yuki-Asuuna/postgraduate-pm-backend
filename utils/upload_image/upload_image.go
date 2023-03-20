@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	url       = "http://http://124.221.197.218:80/api/1/upload/"
+	url       = "http://124.221.197.218:80/api/1/upload/"
 	key       = "a6f6c396a4fe645bc1a0ce16f14287df"
 	nameField = "source"
 )
