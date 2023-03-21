@@ -25,4 +25,9 @@ func httpHandlerInit() {
 		authGroup.POST("/password", middleware.AuthMiddleWare(), service.ChangePassword)
 		authGroup.POST("/avatar_upload", middleware.AuthMiddleWare(), service.AvatarUpload)
 	}
+
+	stuGroup := r.Group("/stu")
+	{
+		stuGroup.POST("/first_draft_upload", middleware.AuthMiddleWare(), service.FirstDraftUpload)
+	}
 }

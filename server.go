@@ -8,6 +8,7 @@ import (
 	"postgraduate-pm-backend/constant"
 	"postgraduate-pm-backend/middleware"
 	"postgraduate-pm-backend/utils/ip"
+	"postgraduate-pm-backend/utils/minio"
 	"postgraduate-pm-backend/utils/mysql"
 	"postgraduate-pm-backend/utils/redis"
 	"postgraduate-pm-backend/utils/sessions"
@@ -64,6 +65,11 @@ func main() {
 	httpHandlerInit()
 
 	redis.RedisInit()
+
+	if err := minio.MinioInit(); err != nil {
+		logrus.Error(constant.Main+"Init Minio Failed, err= %v", err)
+		return
+	}
 
 	// init unique id generator (twitter/snowflake)
 	if err := snowflake.SnowflakeInit(); err != nil {
