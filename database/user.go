@@ -2,6 +2,8 @@ package database
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
+	"postgraduate-pm-backend/constant"
 	"postgraduate-pm-backend/utils/mysql"
 	"time"
 )
@@ -9,6 +11,7 @@ import (
 func GetUserByIdentityNumber(identityNumber string) (*User, error) {
 	user := new(User)
 	if err := mysql.GetMySQLClient().First(user, "identity_number = ?", identityNumber).Error; err != nil && err != gorm.ErrRecordNotFound {
+		logrus.Error(constant.DAO+"GetUserByIdentityNumber Failed, err= %v", err)
 		return nil, err
 	}
 	return user, nil
@@ -35,6 +38,7 @@ func UpdateUserByIdentityNumber(identityNumber string, name string, role int64, 
 		"phone_number": phoneNumber,
 		"email":        email,
 	}).Error; err != nil {
+		logrus.Error(constant.DAO+"UpdateUserByIdentityNumber Failed, err= %v", err)
 		return err
 	}
 	return nil

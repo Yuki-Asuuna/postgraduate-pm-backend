@@ -17,16 +17,19 @@ import (
 func FirstDraftUpload(c *gin.Context) {
 	f, err := c.FormFile("source")
 	if err != nil {
+		logrus.Error(constant.Service+"FirstDraftUpload Failed, err= %v", err)
 		c.Error(exception.ParameterError())
 		return
 	}
 	url, err := minio.UploadFile("first-draft", f)
 	if err != nil {
+		logrus.Error(constant.Service+"FirstDraftUpload Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
 	err = database.UpdateFirstDraftByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber, url)
 	if err != nil {
+		logrus.Error(constant.Service+"FirstDraftUpload Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -36,16 +39,19 @@ func FirstDraftUpload(c *gin.Context) {
 func PreliminaryReviewFormUpload(c *gin.Context) {
 	f, err := c.FormFile("source")
 	if err != nil {
+		logrus.Error(constant.Service+"PreliminaryReviewFormUpload Failed, err= %v", err)
 		c.Error(exception.ParameterError())
 		return
 	}
 	url, err := minio.UploadFile("preliminary-review-form", f)
 	if err != nil {
+		logrus.Error(constant.Service+"PreliminaryReviewFormUpload Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
 	err = database.UpdatePreliminaryReviewFormByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber, url)
 	if err != nil {
+		logrus.Error(constant.Service+"PreliminaryReviewFormUpload Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -55,11 +61,13 @@ func PreliminaryReviewFormUpload(c *gin.Context) {
 func GetStudentStatusInfo(c *gin.Context) {
 	info, err := database.GetStudentStatusInfoByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber)
 	if err != nil {
+		logrus.Error(constant.Service+"Me Get Student Status Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
 	supervisor, err := database.GetUserByIdentityNumber(info.SupervisorID)
 	if err != nil {
+		logrus.Error(constant.Service+"Me Get Student Status Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -95,6 +103,7 @@ func PostStudentStatusInfo(c *gin.Context) {
 
 	err := database.UpdateStudentStatusInfoByIdentityNumber(identityNumber, college, class, length, degreeType, status, time.Unix(graduateTime, 0))
 	if err != nil {
+		logrus.Error(constant.Service+"Me Post Student Status Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -104,6 +113,7 @@ func PostStudentStatusInfo(c *gin.Context) {
 func GetStudentFileInfo(c *gin.Context) {
 	info, err := database.GetStudentFileInfoByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber)
 	if err != nil {
+		logrus.Error(constant.Service+"Me Get Student File Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}

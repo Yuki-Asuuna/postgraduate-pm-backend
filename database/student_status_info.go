@@ -1,6 +1,8 @@
 package database
 
 import (
+	"github.com/sirupsen/logrus"
+	"postgraduate-pm-backend/constant"
 	"postgraduate-pm-backend/utils/mysql"
 	"time"
 )
@@ -8,6 +10,7 @@ import (
 func GetStudentStatusInfoByIdentityNumber(identityNumber string) (*StudentStatusInfo, error) {
 	info := new(StudentStatusInfo)
 	if err := mysql.GetMySQLClient().First(info, "identity_number = ?", identityNumber).Error; err != nil {
+		logrus.Error(constant.DAO+"GetStudentStatusInfoByIdentityNumber Failed, err= %v", err)
 		return nil, err
 	}
 	return info, nil
@@ -22,6 +25,7 @@ func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college stri
 		"status":        status,
 		"graduate_time": graduateTime,
 	}).Error; err != nil {
+		logrus.Error(constant.DAO+"UpdateStudentStatusInfoByIdentityNumber Failed, err= %v", err)
 		return err
 	}
 	return nil
