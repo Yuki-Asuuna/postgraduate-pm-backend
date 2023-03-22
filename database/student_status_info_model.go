@@ -10,6 +10,7 @@ type StudentStatusInfo struct {
 	GraduateTime   time.Time
 	DegreeType     int64
 	Status         int64
+	SupervisorID   string
 }
 
 func (StudentStatusInfo) TableName() string {

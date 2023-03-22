@@ -1,13 +1,14 @@
 package database
 
 import (
+	"github.com/jinzhu/gorm"
 	"postgraduate-pm-backend/utils/mysql"
 	"time"
 )
 
 func GetUserByIdentityNumber(identityNumber string) (*User, error) {
 	user := new(User)
-	if err := mysql.GetMySQLClient().First(user, "identity_number = ?", identityNumber).Error; err != nil {
+	if err := mysql.GetMySQLClient().First(user, "identity_number = ?", identityNumber).Error; err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return user, nil

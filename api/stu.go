@@ -8,6 +8,7 @@ type StudentStatusInfoResponse struct {
 	GraduateTime   int64  `json:"graduateTime"`
 	DegreeType     int64  `json:"degreeType"`
 	Status         int64  `json:"status"`
+	SupervisorName string `json:"supervisorName"`
 }
 
 type StudentFileInfoResponse struct {

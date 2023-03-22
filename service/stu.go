@@ -58,6 +58,11 @@ func GetStudentStatusInfo(c *gin.Context) {
 		c.Error(exception.ServerError())
 		return
 	}
+	supervisor, err := database.GetUserByIdentityNumber(info.SupervisorID)
+	if err != nil {
+		c.Error(exception.ServerError())
+		return
+	}
 	result := &api.StudentStatusInfoResponse{
 		IdentityNumber: info.IdentityNumber,
 		College:        info.College,
@@ -66,6 +71,7 @@ func GetStudentStatusInfo(c *gin.Context) {
 		GraduateTime:   info.GraduateTime.Unix(),
 		DegreeType:     info.DegreeType,
 		Status:         info.Status,
+		SupervisorName: supervisor.Name,
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
 }
