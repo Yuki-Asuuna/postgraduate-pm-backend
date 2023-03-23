@@ -61,13 +61,13 @@ func PreliminaryReviewFormUpload(c *gin.Context) {
 func GetStudentStatusInfo(c *gin.Context) {
 	info, err := database.GetStudentStatusInfoByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber)
 	if err != nil {
-		logrus.Error(constant.Service+"Me Get Student Status Info Failed, err= %v", err)
+		logrus.Error(constant.Service+"Get Student Status Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
 	supervisor, err := database.GetUserByIdentityNumber(info.SupervisorID)
 	if err != nil {
-		logrus.Error(constant.Service+"Me Get Student Status Info Failed, err= %v", err)
+		logrus.Error(constant.Service+"Get Student Status Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -88,7 +88,7 @@ func PostStudentStatusInfo(c *gin.Context) {
 	user := sessions.GetUserInfoBySession(c)
 	if user == nil {
 		c.Error(exception.ServerError())
-		logrus.Error(constant.Service + "Me Get Student Status Info Failed, user is nil")
+		logrus.Error(constant.Service + "Get Student Status Info Failed, user is nil")
 		return
 	}
 	params := make(map[string]interface{})
@@ -113,7 +113,7 @@ func PostStudentStatusInfo(c *gin.Context) {
 func GetStudentFileInfo(c *gin.Context) {
 	info, err := database.GetStudentFileInfoByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber)
 	if err != nil {
-		logrus.Error(constant.Service+"Me Get Student File Info Failed, err= %v", err)
+		logrus.Error(constant.Service+"Get Student File Info Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -127,4 +127,34 @@ func GetStudentFileInfo(c *gin.Context) {
 		IsPreliminaryReviewFormSubmitted: info.IsPreliminaryReviewFormSubmitted,
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
+}
+
+func StudentGetComment(c *gin.Context) {
+	identityNumber := sessions.GetUserIdentityNumberBySession(c)
+	info, err := database.GetStudentFileInfoByIdentityNumber(identityNumber)
+	if err != nil {
+		logrus.Error(constant.Service+"StudentGetComment Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+	result := &api.StudentGetCommentResponse{
+		IdentityNumber:    info.IdentityNumber,
+		StudentComment:    info.StudentComment,
+		SupervisorComment: info.SupervisorComment,
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
+}
+
+func StudentPostComment(c *gin.Context) {
+	identityNumber := sessions.GetUserIdentityNumberBySession(c)
+	params := make(map[string]interface{})
+	c.BindJSON(&params)
+	studentComment := params["studentComment"].(string)
+	err := database.UpdateStudentCommentByIdentityNumber(identityNumber, studentComment)
+	if err != nil {
+		logrus.Error(constant.Service+"StudentPostComment Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
 }

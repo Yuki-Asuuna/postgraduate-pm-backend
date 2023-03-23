@@ -43,3 +43,16 @@ func UpdateUserByIdentityNumber(identityNumber string, name string, role int64, 
 	}
 	return nil
 }
+
+func GetUsersByIdentityNumbers(identityNumbers []string) (map[string]*User, error) {
+	users := make([]*User, 0)
+	if err := mysql.GetMySQLClient().Where("identity_number in (?)", identityNumbers).Find(&users).Error; err != nil {
+		logrus.Error(constant.DAO+"GetUsersByIdentityNumbers Failed, err= %v", err)
+		return nil, err
+	}
+	userMap := make(map[string]*User)
+	for _, user := range users {
+		userMap[user.IdentityNumber] = user
+	}
+	return userMap, nil
+}

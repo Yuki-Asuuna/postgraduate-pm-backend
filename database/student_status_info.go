@@ -30,3 +30,13 @@ func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college stri
 	}
 	return nil
 }
+
+func GetStudentStatusInfoListBySupervisorID(supervisorID string) ([]*StudentStatusInfo, error) {
+	var studentStatusInfoList []*StudentStatusInfo
+	studentStatusInfoList = make([]*StudentStatusInfo, 0)
+	if err := mysql.GetMySQLClient().Where("supervisor_id = ?", supervisorID).Find(&studentStatusInfoList).Error; err != nil {
+		logrus.Error(constant.DAO+"GetStudentStatusInfoListBySupervisorID Failed, err= %v", err)
+		return nil, err
+	}
+	return studentStatusInfoList, nil
+}

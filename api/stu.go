@@ -20,3 +20,9 @@ type StudentFileInfoResponse struct {
 	IsFirstDraftConfirmed            int64  `json:"isFirstDraftConfirmed"`
 	IsPreliminaryReviewFormConfirmed int64  `json:"isPreliminaryReviewFormConfirmed"`
 }
+
+type StudentGetCommentResponse struct {
+	IdentityNumber    string `json:"identityNumber"`
+	StudentComment    string `json:"studentComment"`
+	SupervisorComment string `json:"supervisorComment"`
+}

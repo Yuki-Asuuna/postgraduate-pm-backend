@@ -8,6 +8,8 @@ type StudentFileInfo struct {
 	IsPreliminaryReviewFormSubmitted int64
 	IsFirstDraftConfirmed            int64
 	IsPreliminaryReviewFormConfirmed int64
+	StudentComment                   string
+	SupervisorComment                string
 }
 
 func (StudentFileInfo) TableName() string {

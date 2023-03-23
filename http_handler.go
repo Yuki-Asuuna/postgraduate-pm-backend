@@ -33,5 +33,14 @@ func httpHandlerInit() {
 		stuGroup.GET("/status_info", middleware.AuthMiddleWare(), service.GetStudentStatusInfo)
 		stuGroup.POST("/status_info", middleware.AuthMiddleWare(), service.PostStudentStatusInfo)
 		stuGroup.GET("/file_info", middleware.AuthMiddleWare(), service.GetStudentFileInfo)
+		stuGroup.GET("/comment", middleware.AuthMiddleWare(), service.StudentGetComment)
+		stuGroup.POST("/comment", middleware.AuthMiddleWare(), service.StudentPostComment)
+	}
+
+	supervisorGroup := r.Group("/supervisor")
+	{
+		supervisorGroup.GET("/stu_list", middleware.AuthMiddleWare(), service.SupervisorGetStudentList)
+		supervisorGroup.GET("/comment", middleware.AuthMiddleWare(), service.SupervisorGetComment)
+		supervisorGroup.POST("/comment", middleware.AuthMiddleWare(), service.SupervisorPostComment)
 	}
 }
