@@ -12,13 +12,13 @@ import (
 func ImageUpload(c *gin.Context) {
 	f, err := c.FormFile("source")
 	if err != nil {
-		logrus.Error("ImageUpload Failed, err= %v", err)
+		logrus.Errorf("ImageUpload Failed, err= %v", err)
 		c.Error(exception.ParameterError())
 		return
 	}
 	url, err := upload_image.GetImageUrl(f)
 	if err != nil {
-		logrus.Error("ImageUpload Failed, err= %v", err)
+		logrus.Errorf("ImageUpload Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}

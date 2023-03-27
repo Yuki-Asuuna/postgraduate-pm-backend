@@ -25,7 +25,7 @@ func Login(c *gin.Context) {
 
 	if err != nil {
 		c.Error(exception.ServerError())
-		logrus.Error(constant.Service+"Login Failed, err= %v", err)
+		logrus.Errorf(constant.Service+"Login Failed, err= %v", err)
 		return
 	}
 	if user == nil {
@@ -82,7 +82,7 @@ func Me(c *gin.Context) {
 	user := sessions.GetUserInfoBySession(c)
 	if user == nil {
 		c.Error(exception.ServerError())
-		logrus.Error(constant.Service + "Me Get Personal Info Failed, user is nil")
+		logrus.Errorf(constant.Service + "Me Get Personal Info Failed, user is nil")
 		return
 	}
 	result := &api.MeResponse{
@@ -103,7 +103,7 @@ func ChangePassword(c *gin.Context) {
 	user := sessions.GetUserInfoBySession(c)
 	if user == nil {
 		c.Error(exception.ServerError())
-		logrus.Error(constant.Service + "ChangePassword Get Personal Info Failed, user is nil")
+		logrus.Errorf(constant.Service + "ChangePassword Get Personal Info Failed, user is nil")
 		return
 	}
 	params := make(map[string]interface{})
@@ -130,12 +130,12 @@ func AvatarUpload(c *gin.Context) {
 	user := sessions.GetUserInfoBySession(c)
 	if user == nil {
 		c.Error(exception.ServerError())
-		logrus.Error(constant.Service + "AvatarUpload Failed, user is nil")
+		logrus.Errorf(constant.Service + "AvatarUpload Failed, user is nil")
 		return
 	}
 	err := database.UpdateUserAvatarByIdentityNumber(user.IdentityNumber, url)
 	if err != nil {
-		logrus.Error(constant.Service+"AvatarUpload Failed, err= %v", err)
+		logrus.Errorf(constant.Service+"AvatarUpload Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}
@@ -146,7 +146,7 @@ func PostMe(c *gin.Context) {
 	user := sessions.GetUserInfoBySession(c)
 	if user == nil {
 		c.Error(exception.ServerError())
-		logrus.Error(constant.Service + "Me Get Personal Info Failed, user is nil")
+		logrus.Errorf(constant.Service + "Me Get Personal Info Failed, user is nil")
 		return
 	}
 	params := make(map[string]interface{})
@@ -160,7 +160,7 @@ func PostMe(c *gin.Context) {
 	identityNumber := user.IdentityNumber
 	err := database.UpdateUserByIdentityNumber(identityNumber, name, role, gender, age, phoneNumber, email)
 	if err != nil {
-		logrus.Error(constant.Service+"PostMe Failed, err= %v", err)
+		logrus.Errorf(constant.Service+"PostMe Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}

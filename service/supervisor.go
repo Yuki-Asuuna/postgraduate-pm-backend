@@ -12,11 +12,70 @@ import (
 )
 
 func SupervisorGetComment(c *gin.Context) {
-	// TODO
+	supervisorIdentityNumber := sessions.GetUserIdentityNumberBySession(c)
+	identityNumber := c.Query("identityNumber")
+	fileInfo, err := database.GetStudentFileInfoByIdentityNumber(identityNumber)
+	if err != nil {
+		logrus.Errorf(constant.Service+"SupervisorGetComment Failed, err= %v", err)
+		return
+	}
+
+	// 检查student是否属于当前supervisor
+	stus, err := database.GetStudentStatusInfoListBySupervisorID(supervisorIdentityNumber)
+	if err != nil {
+		logrus.Errorf(constant.Service+"SupervisorGetStudentList Failed, err= %v", err)
+		return
+	}
+	var flag bool = false
+	for _, stu := range stus {
+		if stu.IdentityNumber == identityNumber {
+			flag = true
+			break
+		}
+	}
+	if !flag {
+		c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(1, "student not belong to current supervisor", nil))
+		return
+	}
+
+	result := &api.SupervisorGetCommentResponse{
+		IdentityNumber:    fileInfo.IdentityNumber,
+		StudentComment:    fileInfo.StudentComment,
+		SupervisorComment: fileInfo.SupervisorComment,
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
 }
 
 func SupervisorPostComment(c *gin.Context) {
-	// TODO
+	supervisorIdentityNumber := sessions.GetUserIdentityNumberBySession(c)
+	params := make(map[string]interface{})
+	c.BindJSON(&params)
+	supervisorComment := params["supervisorComment"].(string)
+	studentID := params["studentID"].(string)
+	// 检查student是否属于当前supervisor
+	stus, err := database.GetStudentStatusInfoListBySupervisorID(supervisorIdentityNumber)
+	if err != nil {
+		logrus.Errorf(constant.Service+"SupervisorGetStudentList Failed, err= %v", err)
+		return
+	}
+	var flag bool = false
+	for _, stu := range stus {
+		if stu.IdentityNumber == studentID {
+			flag = true
+			break
+		}
+	}
+	if !flag {
+		c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(1, "student not belong to current supervisor", nil))
+		return
+	}
+
+	err = database.UpdateSupervisorCommentByIdentityNumber(studentID, supervisorComment)
+	if err != nil {
+		logrus.Errorf(constant.Service+"SupervisorPostComment Failed, err= %v", err)
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
 }
 
 func SupervisorGetStudentList(c *gin.Context) {

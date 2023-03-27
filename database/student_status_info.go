@@ -10,7 +10,7 @@ import (
 func GetStudentStatusInfoByIdentityNumber(identityNumber string) (*StudentStatusInfo, error) {
 	info := new(StudentStatusInfo)
 	if err := mysql.GetMySQLClient().First(info, "identity_number = ?", identityNumber).Error; err != nil {
-		logrus.Error(constant.DAO+"GetStudentStatusInfoByIdentityNumber Failed, err= %v", err)
+		logrus.Errorf(constant.DAO+"GetStudentStatusInfoByIdentityNumber Failed, err= %v", err)
 		return nil, err
 	}
 	return info, nil
@@ -25,7 +25,7 @@ func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college stri
 		"status":        status,
 		"graduate_time": graduateTime,
 	}).Error; err != nil {
-		logrus.Error(constant.DAO+"UpdateStudentStatusInfoByIdentityNumber Failed, err= %v", err)
+		logrus.Errorf(constant.DAO+"UpdateStudentStatusInfoByIdentityNumber Failed, err= %v", err)
 		return err
 	}
 	return nil
@@ -35,7 +35,7 @@ func GetStudentStatusInfoListBySupervisorID(supervisorID string) ([]*StudentStat
 	var studentStatusInfoList []*StudentStatusInfo
 	studentStatusInfoList = make([]*StudentStatusInfo, 0)
 	if err := mysql.GetMySQLClient().Where("supervisor_id = ?", supervisorID).Find(&studentStatusInfoList).Error; err != nil {
-		logrus.Error(constant.DAO+"GetStudentStatusInfoListBySupervisorID Failed, err= %v", err)
+		logrus.Errorf(constant.DAO+"GetStudentStatusInfoListBySupervisorID Failed, err= %v", err)
 		return nil, err
 	}
 	return studentStatusInfoList, nil

@@ -16,3 +16,9 @@ type StudentStatusInfo struct {
 type SupervisorGetStudentListResponse struct {
 	Stus []*StudentStatusInfo `json:"stus"`
 }
+
+type SupervisorGetCommentResponse struct {
+	IdentityNumber    string `json:"identityNumber"`
+	StudentComment    string `json:"studentComment"`
+	SupervisorComment string `json:"supervisorComment"`
+}

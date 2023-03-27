@@ -24,7 +24,7 @@ const (
 func loggerInit() error {
 	IP, err := ip.GetOutBoundIP()
 	if err != nil {
-		logrus.Error("Get LocalIP failed, err= %v", err)
+		logrus.Errorf("Get LocalIP failed, err= %v", err)
 	}
 
 	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(es_server))
@@ -67,7 +67,7 @@ func main() {
 	redis.RedisInit()
 
 	if err := minio.MinioInit(); err != nil {
-		logrus.Error(constant.Main+"Init Minio Failed, err= %v", err)
+		logrus.Errorf(constant.Main+"Init Minio Failed, err= %v", err)
 		return
 	}
 
@@ -87,13 +87,13 @@ func main() {
 
 	// init mysql database
 	if err := mysql.MysqlInit(); err != nil {
-		logrus.Error(constant.Main+"Init Mysql Failed, err= %v", err)
+		logrus.Errorf(constant.Main+"Init Mysql Failed, err= %v", err)
 		return
 	}
 	logrus.Infof(constant.Main + "Init Mysql Success!")
 
 	// start gin
 	if err := r.Run(":8000"); err != nil {
-		logrus.Error(constant.Main+"Run Gin Server Failed, err= %v", err)
+		logrus.Errorf(constant.Main+"Run Gin Server Failed, err= %v", err)
 	}
 }

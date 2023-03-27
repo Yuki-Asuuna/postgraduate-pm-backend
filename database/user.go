@@ -11,7 +11,7 @@ import (
 func GetUserByIdentityNumber(identityNumber string) (*User, error) {
 	user := new(User)
 	if err := mysql.GetMySQLClient().First(user, "identity_number = ?", identityNumber).Error; err != nil && err != gorm.ErrRecordNotFound {
-		logrus.Error(constant.DAO+"GetUserByIdentityNumber Failed, err= %v", err)
+		logrus.Errorf(constant.DAO+"GetUserByIdentityNumber Failed, err= %v", err)
 		return nil, err
 	}
 	return user, nil
@@ -38,7 +38,7 @@ func UpdateUserByIdentityNumber(identityNumber string, name string, role int64, 
 		"phone_number": phoneNumber,
 		"email":        email,
 	}).Error; err != nil {
-		logrus.Error(constant.DAO+"UpdateUserByIdentityNumber Failed, err= %v", err)
+		logrus.Errorf(constant.DAO+"UpdateUserByIdentityNumber Failed, err= %v", err)
 		return err
 	}
 	return nil
@@ -47,7 +47,7 @@ func UpdateUserByIdentityNumber(identityNumber string, name string, role int64, 
 func GetUsersByIdentityNumbers(identityNumbers []string) (map[string]*User, error) {
 	users := make([]*User, 0)
 	if err := mysql.GetMySQLClient().Where("identity_number in (?)", identityNumbers).Find(&users).Error; err != nil {
-		logrus.Error(constant.DAO+"GetUsersByIdentityNumbers Failed, err= %v", err)
+		logrus.Errorf(constant.DAO+"GetUsersByIdentityNumbers Failed, err= %v", err)
 		return nil, err
 	}
 	userMap := make(map[string]*User)
