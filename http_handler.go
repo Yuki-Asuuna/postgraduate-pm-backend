@@ -42,6 +42,6 @@ func httpHandlerInit() {
 		supervisorGroup.GET("/stu_list", middleware.AuthMiddleWare(), service.SupervisorGetStudentList)
 		supervisorGroup.GET("/comment", middleware.AuthMiddleWare(), service.SupervisorGetComment)
 		supervisorGroup.POST("/comment", middleware.AuthMiddleWare(), service.SupervisorPostComment)
-		// supervisorGroup.POST("/bind", middleware.AuthMiddleWare(), service.SupervisorBindStudent)
+		supervisorGroup.POST("/bind", middleware.AuthMiddleWare(), service.SupervisorBindStudent)
 	}
 }

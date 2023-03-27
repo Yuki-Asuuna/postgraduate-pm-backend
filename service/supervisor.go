@@ -117,3 +117,16 @@ func SupervisorGetStudentList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
 }
+
+func SupervisorBindStudent(c *gin.Context) {
+	identityNumber := sessions.GetUserIdentityNumberBySession(c)
+	params := make(map[string]interface{})
+	c.BindJSON(&params)
+	studentID := params["studentID"].(string)
+	err := database.UpdateSupervisorIDByIdentityNumber(studentID, identityNumber)
+	if err != nil {
+		logrus.Errorf(constant.Service+"SupervisorBindStudent Failed, err= %v", err)
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
+}
