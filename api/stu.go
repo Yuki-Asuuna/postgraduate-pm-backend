@@ -9,6 +9,7 @@ type StudentStatusInfoResponse struct {
 	DegreeType     int64  `json:"degreeType"`
 	Status         int64  `json:"status"`
 	SupervisorName string `json:"supervisorName"`
+	IsConfirmed    int64  `json:"isConfirmed"`
 }
 
 type StudentFileInfoResponse struct {

@@ -4,6 +4,10 @@ import (
 	"strconv"
 )
 
+func I2B(i int64) bool {
+	return i != 0
+}
+
 func S2I(s string) int {
 	i, _ := strconv.Atoi(s)
 	return i

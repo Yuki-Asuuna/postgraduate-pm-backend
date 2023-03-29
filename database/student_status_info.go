@@ -16,7 +16,7 @@ func GetStudentStatusInfoByIdentityNumber(identityNumber string) (*StudentStatus
 	return info, nil
 }
 
-func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college string, class string, length int64, degreeType int64, status int64, graduateTime time.Time) error {
+func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college string, class string, length int64, degreeType int64, status int64, graduateTime time.Time, isConfirmed int64) error {
 	if err := mysql.GetMySQLClient().Model(&StudentStatusInfo{}).Where("identity_number = ?", identityNumber).Updates(map[string]interface{}{
 		"college":       college,
 		"class":         class,
@@ -24,6 +24,7 @@ func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college stri
 		"degree_type":   degreeType,
 		"status":        status,
 		"graduate_time": graduateTime,
+		"is_confirmed":  isConfirmed,
 	}).Error; err != nil {
 		logrus.Errorf(constant.DAO+"UpdateStudentStatusInfoByIdentityNumber Failed, err= %v", err)
 		return err
@@ -31,10 +32,12 @@ func UpdateStudentStatusInfoByIdentityNumber(identityNumber string, college stri
 	return nil
 }
 
-func GetStudentStatusInfoListBySupervisorID(supervisorID string) ([]*StudentStatusInfo, error) {
+func GetStudentStatusInfoListBySupervisorID(supervisorID string, page int, size int) ([]*StudentStatusInfo, error) {
 	var studentStatusInfoList []*StudentStatusInfo
 	studentStatusInfoList = make([]*StudentStatusInfo, 0)
-	if err := mysql.GetMySQLClient().Where("supervisor_id = ?", supervisorID).Find(&studentStatusInfoList).Error; err != nil {
+	query := mysql.GetMySQLClient()
+	query = query.Where("supervisor_id = ?", supervisorID).Offset(page * size).Limit(size)
+	if err := query.Find(&studentStatusInfoList).Error; err != nil {
 		logrus.Errorf(constant.DAO+"GetStudentStatusInfoListBySupervisorID Failed, err= %v", err)
 		return nil, err
 	}

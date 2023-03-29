@@ -11,6 +11,7 @@ type StudentStatusInfo struct {
 	DegreeType     int64
 	Status         int64
 	SupervisorID   string
+	IsConfirmed    int64
 }
 
 func (StudentStatusInfo) TableName() string {

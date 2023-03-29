@@ -58,6 +58,28 @@ func PreliminaryReviewFormUpload(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", url))
 }
 
+func ResearchEvaluationMaterialUpload(c *gin.Context) {
+	f, err := c.FormFile("source")
+	if err != nil {
+		logrus.Errorf(constant.Service+"ResearchEvaluationMaterialUpload Failed, err= %v", err)
+		c.Error(exception.ParameterError())
+		return
+	}
+	url, err := minio.UploadFile("research-evaluation-material", f)
+	if err != nil {
+		logrus.Errorf(constant.Service+"ResearchEvaluationMaterialUpload Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+	err = database.UpdateResearchEvaluationMaterialByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber, url)
+	if err != nil {
+		logrus.Errorf(constant.Service+"ResearchEvaluationMaterialUpload Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", url))
+}
+
 func GetStudentStatusInfo(c *gin.Context) {
 	info, err := database.GetStudentStatusInfoByIdentityNumber(sessions.GetUserInfoBySession(c).IdentityNumber)
 	if err != nil {
@@ -80,6 +102,7 @@ func GetStudentStatusInfo(c *gin.Context) {
 		DegreeType:     info.DegreeType,
 		Status:         info.Status,
 		SupervisorName: supervisor.Name,
+		IsConfirmed:    info.IsConfirmed,
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
 }
@@ -100,8 +123,9 @@ func PostStudentStatusInfo(c *gin.Context) {
 	degreeType := int64(params["degreeType"].(float64))
 	status := int64(params["status"].(float64))
 	graduateTime := int64(params["graduateTime"].(float64))
+	isConfirmed := int64(params["isConfirmed"].(float64))
 
-	err := database.UpdateStudentStatusInfoByIdentityNumber(identityNumber, college, class, length, degreeType, status, time.Unix(graduateTime, 0))
+	err := database.UpdateStudentStatusInfoByIdentityNumber(identityNumber, college, class, length, degreeType, status, time.Unix(graduateTime, 0), isConfirmed)
 	if err != nil {
 		logrus.Errorf(constant.Service+"Me Post Student Status Info Failed, err= %v", err)
 		c.Error(exception.ServerError())

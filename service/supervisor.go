@@ -8,6 +8,7 @@ import (
 	"postgraduate-pm-backend/constant"
 	"postgraduate-pm-backend/database"
 	"postgraduate-pm-backend/utils"
+	"postgraduate-pm-backend/utils/helper"
 	"postgraduate-pm-backend/utils/sessions"
 )
 
@@ -21,7 +22,7 @@ func SupervisorGetComment(c *gin.Context) {
 	}
 
 	// 检查student是否属于当前supervisor
-	stus, err := database.GetStudentStatusInfoListBySupervisorID(supervisorIdentityNumber)
+	stus, err := database.GetStudentStatusInfoListBySupervisorID(supervisorIdentityNumber, 0, 999999)
 	if err != nil {
 		logrus.Errorf(constant.Service+"SupervisorGetStudentList Failed, err= %v", err)
 		return
@@ -53,7 +54,7 @@ func SupervisorPostComment(c *gin.Context) {
 	supervisorComment := params["supervisorComment"].(string)
 	studentID := params["studentID"].(string)
 	// 检查student是否属于当前supervisor
-	stus, err := database.GetStudentStatusInfoListBySupervisorID(supervisorIdentityNumber)
+	stus, err := database.GetStudentStatusInfoListBySupervisorID(supervisorIdentityNumber, 0, 999999)
 	if err != nil {
 		logrus.Errorf(constant.Service+"SupervisorGetStudentList Failed, err= %v", err)
 		return
@@ -79,8 +80,10 @@ func SupervisorPostComment(c *gin.Context) {
 }
 
 func SupervisorGetStudentList(c *gin.Context) {
+	page := helper.S2I(c.DefaultQuery("page", "0"))
+	size := helper.S2I(c.DefaultQuery("size", "10"))
 	identityNumber := sessions.GetUserIdentityNumberBySession(c)
-	stus, err := database.GetStudentStatusInfoListBySupervisorID(identityNumber)
+	stus, err := database.GetStudentStatusInfoListBySupervisorID(identityNumber, page, size)
 	if err != nil {
 		logrus.Errorf(constant.Service+"SupervisorGetStudentList Failed, err= %v", err)
 		return
@@ -103,16 +106,22 @@ func SupervisorGetStudentList(c *gin.Context) {
 
 	result := &api.SupervisorGetStudentListResponse{}
 	for _, stu := range stus {
+		file := FileInfoMap[stu.IdentityNumber]
 		result.Stus = append(result.Stus, &api.StudentStatusInfo{
-			IdentityNumber: stu.IdentityNumber,
-			College:        stu.College,
-			Class:          stu.Class,
-			Length:         stu.Length,
-			GraduateTime:   stu.GraduateTime.String(),
-			DegreeType:     stu.DegreeType,
-			Status:         stu.Status,
-			Name:           UserMap[stu.IdentityNumber].Name,
-			FirstDraftURL:  FileInfoMap[stu.IdentityNumber].FirstDraft,
+			IdentityNumber:                        stu.IdentityNumber,
+			College:                               stu.College,
+			Class:                                 stu.Class,
+			Length:                                stu.Length,
+			GraduateTime:                          stu.GraduateTime.String(),
+			DegreeType:                            stu.DegreeType,
+			Status:                                stu.Status,
+			Name:                                  UserMap[stu.IdentityNumber].Name,
+			FirstDraftURL:                         file.FirstDraft,
+			IsFirstDraftConfirmed:                 helper.I2B(file.IsFirstDraftConfirmed),
+			PreliminaryReviewFormURL:              file.PreliminaryReviewForm,
+			IsPreliminaryReviewFormConfirmed:      helper.I2B(file.IsPreliminaryReviewFormConfirmed),
+			IsResearchEvaluationMaterialConfirmed: helper.I2B(file.IsResearchEvaluationMaterialConfirmed),
+			ResearchEvaluationMaterialURL:         file.ResearchEvaluationMaterial,
 		})
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
@@ -127,6 +136,34 @@ func SupervisorBindStudent(c *gin.Context) {
 	if err != nil {
 		logrus.Errorf(constant.Service+"SupervisorBindStudent Failed, err= %v", err)
 		return
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
+}
+
+func SupervisorConfirmStudent(c *gin.Context) {
+	// identityNumber := sessions.GetUserIdentityNumberBySession(c)
+	params := make(map[string]interface{})
+	c.BindJSON(&params)
+	studentID := params["studentID"].(string)
+	confirmType := int64(params["confirmType"].(float64))
+	if confirmType == 0 { // first draft
+		err := database.UpdateIsFirstDraftConfirmedByIdentityNumber(studentID, 1)
+		if err != nil {
+			logrus.Errorf(constant.Service+"SupervisorConfirmStudent Failed, err= %v", err)
+			return
+		}
+	} else if confirmType == 1 { // preliminary review form
+		err := database.UpdateIsPreliminaryReviewFormConfirmedByIdentityNumber(studentID, 1)
+		if err != nil {
+			logrus.Errorf(constant.Service+"SupervisorConfirmStudent Failed, err= %v", err)
+			return
+		}
+	} else if confirmType == 2 { // research evaluation material
+		err := database.UpdateIsResearchEvaluationMaterialConfirmedByIdentityNumber(studentID, 1)
+		if err != nil {
+			logrus.Errorf(constant.Service+"SupervisorConfirmStudent Failed, err= %v", err)
+			return
+		}
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
 }
