@@ -53,3 +53,37 @@ func UpdateSupervisorIDByIdentityNumber(studentID, identityNumber string) error 
 	}
 	return nil
 }
+
+func GetStudentStatusInfoList(page int, size int, identityNumber string) ([]*StudentStatusInfo, error) {
+	counsellors := make([]*StudentStatusInfo, 0)
+	query := mysql.GetMySQLClient()
+	if identityNumber != "" {
+		query = query.Where("identity_number like ?", "%"+identityNumber+"%")
+	}
+	err := query.Offset(page * size).Limit(size).Find(&counsellors).Error
+	if err != nil {
+		logrus.Errorf(constant.DAO+"GetStudentStatusInfoList Failed, err= %v", err)
+		return nil, err
+	}
+	return counsellors, nil
+}
+
+func UpdateBlindScore(identityNumber string, blindScore int64) error {
+	if err := mysql.GetMySQLClient().Model(&StudentStatusInfo{}).Where("identity_number = ?", identityNumber).Updates(map[string]interface{}{
+		"blind_score": blindScore,
+	}).Error; err != nil {
+		logrus.Errorf(constant.DAO+"UpdateBlindScore Failed, err= %v", err)
+		return err
+	}
+	return nil
+}
+
+func UpdateDefenseScore(identityNumber string, defenseScore int64) error {
+	if err := mysql.GetMySQLClient().Model(&StudentStatusInfo{}).Where("identity_number = ?", identityNumber).Updates(map[string]interface{}{
+		"defense_score": defenseScore,
+	}).Error; err != nil {
+		logrus.Errorf(constant.DAO+"UpdateDefenseScore Failed, err= %v", err)
+		return err
+	}
+	return nil
+}

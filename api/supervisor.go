@@ -16,6 +16,8 @@ type StudentStatusInfo struct {
 	IsPreliminaryReviewFormConfirmed      bool   `json:"isPreliminaryReviewFormConfirmed"`
 	ResearchEvaluationMaterialURL         string `json:"researchEvaluationMaterialURL"`
 	IsResearchEvaluationMaterialConfirmed bool   `json:"isResearchEvaluationMaterialConfirmed"`
+	BlindScore                            int64  `json:"blindScore"`
+	DefenseScore                          int64  `json:"defenseScore"`
 }
 
 type SupervisorGetStudentListResponse struct {

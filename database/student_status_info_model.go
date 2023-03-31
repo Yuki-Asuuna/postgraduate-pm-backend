@@ -12,6 +12,8 @@ type StudentStatusInfo struct {
 	Status         int64
 	SupervisorID   string
 	IsConfirmed    int64
+	BlindScore     int64
+	DefenseScore   int64
 }
 
 func (StudentStatusInfo) TableName() string {

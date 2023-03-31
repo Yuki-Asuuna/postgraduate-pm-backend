@@ -13,6 +13,7 @@ const (
 	redis_network  = "tcp"
 	expire_time    = time.Hour * 12
 	online_prefix  = "Online_Account_"
+	current_time   = "Current_Time"
 )
 
 var client *redis.Client
@@ -63,6 +64,22 @@ func GetRedisClient() *redis.Client {
 //	}
 //	return user
 //}
+
+func GetCurrentTime() int64 {
+	result, err := client.Get(ctx, current_time).Result()
+	if err != nil {
+		return 0
+	}
+	return helper.S2I64(result)
+}
+
+func SetCurrentTime(t int64) error {
+	err := client.Set(ctx, current_time, t, 0).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func SetOnline(userID string) error {
 	err := client.Set(ctx, online_prefix+userID, 1, expire_time).Err()

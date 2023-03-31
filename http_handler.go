@@ -16,6 +16,9 @@ func httpHandlerInit() {
 
 	r.PUT("/image_upload", service.ImageUpload)
 
+	r.GET("/current_time", service.GetCurrentTime)
+	r.POST("/current_time", service.PostCurrentTime)
+
 	authGroup := r.Group("/auth")
 	{
 		authGroup.POST("/login", service.Login)
@@ -50,5 +53,7 @@ func httpHandlerInit() {
 	adminGroup := r.Group("/admin")
 	{
 		adminGroup.GET("/stu_list", middleware.AuthMiddleWare(), service.AdminGetStudentList)
+		adminGroup.POST("/upload_blind_score", middleware.AuthMiddleWare(), service.AdminUploadBlindScore)
+		adminGroup.POST("/upload_defense_score", middleware.AuthMiddleWare(), service.AdminUploadDefenseScore)
 	}
 }

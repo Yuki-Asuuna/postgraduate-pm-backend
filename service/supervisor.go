@@ -122,6 +122,8 @@ func SupervisorGetStudentList(c *gin.Context) {
 			IsPreliminaryReviewFormConfirmed:      helper.I2B(file.IsPreliminaryReviewFormConfirmed),
 			IsResearchEvaluationMaterialConfirmed: helper.I2B(file.IsResearchEvaluationMaterialConfirmed),
 			ResearchEvaluationMaterialURL:         file.ResearchEvaluationMaterial,
+			BlindScore:                            stu.BlindScore,
+			DefenseScore:                          stu.DefenseScore,
 		})
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
