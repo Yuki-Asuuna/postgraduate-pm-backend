@@ -35,7 +35,7 @@ func SupervisorGetComment(c *gin.Context) {
 		}
 	}
 	if !flag {
-		c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(1, "student not belong to current supervisor", nil))
+		c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(-3, "student not belong to current supervisor", nil))
 		return
 	}
 
@@ -67,7 +67,7 @@ func SupervisorPostComment(c *gin.Context) {
 		}
 	}
 	if !flag {
-		c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(1, "student not belong to current supervisor", nil))
+		c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(-3, "student not belong to current supervisor", nil))
 		return
 	}
 
@@ -124,6 +124,8 @@ func SupervisorGetStudentList(c *gin.Context) {
 			ResearchEvaluationMaterialURL:         file.ResearchEvaluationMaterial,
 			BlindScore:                            stu.BlindScore,
 			DefenseScore:                          stu.DefenseScore,
+			DegreeConfirmed:                       helper.I2B(stu.DegreeConfirmed),
+			ApplyDegree:                           helper.I2B(stu.ApplyDegree),
 		})
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))

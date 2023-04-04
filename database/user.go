@@ -29,10 +29,9 @@ func UpdateUserAvatarByIdentityNumber(identityNumber string, avatar string) erro
 	return mysql.GetMySQLClient().Model(&User{}).Where("identity_number = ?", identityNumber).Update("avatar", avatar).Error
 }
 
-func UpdateUserByIdentityNumber(identityNumber string, name string, role int64, gender int64, age int64, phoneNumber string, email string) error {
+func UpdateUserByIdentityNumber(identityNumber string, name string, gender int64, age int64, phoneNumber string, email string) error {
 	if err := mysql.GetMySQLClient().Model(&User{}).Where("identity_number = ?", identityNumber).Updates(map[string]interface{}{
 		"name":         name,
-		"role":         role,
 		"gender":       gender,
 		"age":          age,
 		"phone_number": phoneNumber,

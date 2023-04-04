@@ -9,7 +9,6 @@ import (
 	"postgraduate-pm-backend/database"
 	"postgraduate-pm-backend/exception"
 	"postgraduate-pm-backend/utils"
-	"postgraduate-pm-backend/utils/helper"
 	"postgraduate-pm-backend/utils/redis"
 	"postgraduate-pm-backend/utils/sessions"
 )
@@ -32,7 +31,6 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, utils.GenSuccessResponse(-3, "identityNumber not found", nil))
 		return
 	}
-	password = helper.S2MD5(password)
 	if password != user.Password {
 		c.JSON(http.StatusOK, utils.GenSuccessResponse(-3, "Incorrect Password", nil))
 		return
@@ -111,7 +109,7 @@ func ChangePassword(c *gin.Context) {
 	oldPassword := params["oldPassword"].(string)
 	newPassword := params["newPassword"].(string)
 	if user.Password != oldPassword {
-		c.JSON(http.StatusOK, utils.GenSuccessResponse(-1, "旧密码不正确", nil))
+		c.JSON(http.StatusOK, utils.GenSuccessResponse(-2, "旧密码不正确", nil))
 		return
 	}
 	err := database.UpdatePasswordByIdentityNumber(user.IdentityNumber, newPassword)
@@ -152,13 +150,12 @@ func PostMe(c *gin.Context) {
 	params := make(map[string]interface{})
 	c.BindJSON(&params)
 	name := params["name"].(string)
-	role := int64(params["role"].(float64))
 	gender := int64(params["gender"].(float64))
 	age := int64(params["age"].(float64))
 	phoneNumber := params["phoneNumber"].(string)
 	email := params["email"].(string)
 	identityNumber := user.IdentityNumber
-	err := database.UpdateUserByIdentityNumber(identityNumber, name, role, gender, age, phoneNumber, email)
+	err := database.UpdateUserByIdentityNumber(identityNumber, name, gender, age, phoneNumber, email)
 	if err != nil {
 		logrus.Errorf(constant.Service+"PostMe Failed, err= %v", err)
 		c.Error(exception.ServerError())

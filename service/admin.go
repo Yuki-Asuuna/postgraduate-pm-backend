@@ -56,6 +56,8 @@ func AdminGetStudentList(c *gin.Context) {
 			ResearchEvaluationMaterialURL:         file.ResearchEvaluationMaterial,
 			BlindScore:                            stu.BlindScore,
 			DefenseScore:                          stu.DefenseScore,
+			DegreeConfirmed:                       helper.I2B(stu.DegreeConfirmed),
+			ApplyDegree:                           helper.I2B(stu.ApplyDegree),
 		})
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
@@ -83,6 +85,24 @@ func AdminUploadDefenseScore(c *gin.Context) {
 	err := database.UpdateDefenseScore(identityNumber, score)
 	if err != nil {
 		logrus.Errorf(constant.Service+"AdminUploadDefenseScore Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
+}
+
+func AdminUploadDegreeConfirmed(c *gin.Context) {
+	params := make(map[string]interface{})
+	c.BindJSON(&params)
+	identityNumber := params["identityNumber"].(string)
+	applyDegree := params["degreeConfirmed"].(bool)
+	var ad int64
+	if applyDegree {
+		ad = 1
+	}
+	err := database.UpdateDegreeConfirmed(identityNumber, ad)
+	if err != nil {
+		logrus.Errorf(constant.Service+"AdminUploadDegreeConfirmed Failed, err= %v", err)
 		c.Error(exception.ServerError())
 		return
 	}

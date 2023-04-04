@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"postgraduate-pm-backend/constant"
 	"postgraduate-pm-backend/exception"
-	"postgraduate-pm-backend/utils"
 	"postgraduate-pm-backend/utils/sessions"
 )
 
@@ -34,21 +33,18 @@ func AuthMiddleWare() gin.HandlerFunc {
 		if err != nil {
 			c.Error(exception.AuthError())
 			logrus.Errorf(constant.Service+"AuthMiddleWare Store Get Session Failed, err= %v", err)
-			c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(-1, "Auth Failed", nil))
 			c.Abort()
 			return
 		}
 		if session.IsNew {
 			c.Error(exception.AuthError())
 			logrus.Errorf(constant.Service+"AuthMiddleWare Store Session Is New, err= %v", err)
-			c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(-1, "Auth Failed", nil))
 			c.Abort()
 			return
 		}
 		if isauth, ok := session.Values["authenticated"].(bool); !ok || !isauth {
 			c.Error(exception.AuthError())
 			logrus.Infof(constant.Service + "AuthMiddleWare Store Values Is False")
-			c.JSON(http.StatusUnauthorized, utils.GenSuccessResponse(-1, "Auth Failed", nil))
 			c.Abort()
 			return
 		}

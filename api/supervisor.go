@@ -18,6 +18,8 @@ type StudentStatusInfo struct {
 	IsResearchEvaluationMaterialConfirmed bool   `json:"isResearchEvaluationMaterialConfirmed"`
 	BlindScore                            int64  `json:"blindScore"`
 	DefenseScore                          int64  `json:"defenseScore"`
+	ApplyDegree                           bool   `json:"applyDegree"`
+	DegreeConfirmed                       bool   `json:"degreeConfirmed"`
 }
 
 type SupervisorGetStudentListResponse struct {

@@ -13,13 +13,16 @@ type StudentStatusInfoResponse struct {
 }
 
 type StudentFileInfoResponse struct {
-	IdentityNumber                   string `json:"identityNumber"`
-	FirstDraft                       string `json:"firstDraft"`
-	PreliminaryReviewForm            string `json:"preliminaryReviewForm"`
-	IsFirstDraftSubmitted            int64  `json:"isFirstDraftSubmitted"`
-	IsPreliminaryReviewFormSubmitted int64  `json:"isPreliminaryReviewFormSubmitted"`
-	IsFirstDraftConfirmed            int64  `json:"isFirstDraftConfirmed"`
-	IsPreliminaryReviewFormConfirmed int64  `json:"isPreliminaryReviewFormConfirmed"`
+	IdentityNumber                        string `json:"identityNumber"`
+	FirstDraft                            string `json:"firstDraft"`
+	PreliminaryReviewForm                 string `json:"preliminaryReviewForm"`
+	ResearchEvaluationMaterial            string `json:"researchEvaluationMaterial"`
+	IsFirstDraftSubmitted                 int64  `json:"isFirstDraftSubmitted"`
+	IsPreliminaryReviewFormSubmitted      int64  `json:"isPreliminaryReviewFormSubmitted"`
+	IsFirstDraftConfirmed                 int64  `json:"isFirstDraftConfirmed"`
+	IsPreliminaryReviewFormConfirmed      int64  `json:"isPreliminaryReviewFormConfirmed"`
+	IsResearchEvaluationMaterialSubmitted int64  `json:"isResearchEvaluationMaterialSubmitted"`
+	IsResearchEvaluationMaterialConfirmed int64  `json:"isResearchEvaluationMaterialConfirmed"`
 }
 
 type StudentGetCommentResponse struct {

@@ -114,12 +114,12 @@ func PostStudentStatusInfo(c *gin.Context) {
 		logrus.Errorf(constant.Service + "Get Student Status Info Failed, user is nil")
 		return
 	}
+	identityNumber := user.IdentityNumber
 	params := make(map[string]interface{})
 	c.BindJSON(&params)
 	college := params["college"].(string)
 	class := params["class"].(string)
 	length := int64(params["length"].(float64))
-	identityNumber := params["identityNumber"].(string)
 	degreeType := int64(params["degreeType"].(float64))
 	status := int64(params["status"].(float64))
 	graduateTime := int64(params["graduateTime"].(float64))
@@ -142,13 +142,15 @@ func GetStudentFileInfo(c *gin.Context) {
 		return
 	}
 	result := &api.StudentFileInfoResponse{
-		IdentityNumber:                   info.IdentityNumber,
-		FirstDraft:                       info.FirstDraft,
-		PreliminaryReviewForm:            info.PreliminaryReviewForm,
-		IsFirstDraftConfirmed:            info.IsFirstDraftConfirmed,
-		IsPreliminaryReviewFormConfirmed: info.IsPreliminaryReviewFormConfirmed,
-		IsFirstDraftSubmitted:            info.IsFirstDraftSubmitted,
-		IsPreliminaryReviewFormSubmitted: info.IsPreliminaryReviewFormSubmitted,
+		IdentityNumber:                        info.IdentityNumber,
+		FirstDraft:                            info.FirstDraft,
+		PreliminaryReviewForm:                 info.PreliminaryReviewForm,
+		IsFirstDraftConfirmed:                 info.IsFirstDraftConfirmed,
+		IsPreliminaryReviewFormConfirmed:      info.IsPreliminaryReviewFormConfirmed,
+		IsFirstDraftSubmitted:                 info.IsFirstDraftSubmitted,
+		IsPreliminaryReviewFormSubmitted:      info.IsPreliminaryReviewFormSubmitted,
+		IsResearchEvaluationMaterialConfirmed: info.IsResearchEvaluationMaterialConfirmed,
+		IsResearchEvaluationMaterialSubmitted: info.IsResearchEvaluationMaterialSubmitted,
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
 }
@@ -181,4 +183,9 @@ func StudentPostComment(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
+}
+
+func StudentApplyDegree(c *gin.Context) {
+	// TODO: 申请学位
+	//
 }

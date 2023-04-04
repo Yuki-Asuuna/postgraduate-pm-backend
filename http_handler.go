@@ -1,8 +1,10 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"postgraduate-pm-backend/constant"
+	"postgraduate-pm-backend/exception"
 	"postgraduate-pm-backend/middleware"
 	"postgraduate-pm-backend/service"
 )
@@ -11,6 +13,8 @@ func httpHandlerInit() {
 	logrus.Info(constant.Main + "Init httpHandlerInit")
 	// 支持跨域访问
 	r.Use(middleware.Cors())
+	r.Use(gin.Recovery())
+	r.Use(exception.ErrorHandlingMiddleware)
 
 	r.GET("/ping", service.Ping)
 
@@ -39,6 +43,7 @@ func httpHandlerInit() {
 		stuGroup.GET("/file_info", middleware.AuthMiddleWare(), service.GetStudentFileInfo)
 		stuGroup.GET("/comment", middleware.AuthMiddleWare(), service.StudentGetComment)
 		stuGroup.POST("/comment", middleware.AuthMiddleWare(), service.StudentPostComment)
+		stuGroup.POST("/apply_degree", middleware.AuthMiddleWare(), service.StudentApplyDegree)
 	}
 
 	supervisorGroup := r.Group("/supervisor")
@@ -55,5 +60,6 @@ func httpHandlerInit() {
 		adminGroup.GET("/stu_list", middleware.AuthMiddleWare(), service.AdminGetStudentList)
 		adminGroup.POST("/upload_blind_score", middleware.AuthMiddleWare(), service.AdminUploadBlindScore)
 		adminGroup.POST("/upload_defense_score", middleware.AuthMiddleWare(), service.AdminUploadDefenseScore)
+		adminGroup.POST("/upload_degree_confirmed", middleware.AuthMiddleWare(), service.AdminUploadDegreeConfirmed)
 	}
 }
