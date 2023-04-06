@@ -186,6 +186,28 @@ func StudentPostComment(c *gin.Context) {
 }
 
 func StudentApplyDegree(c *gin.Context) {
-	// TODO: 申请学位
-	//
+	var err error
+	user := sessions.GetUserInfoBySession(c)
+	identityNumber := user.IdentityNumber
+
+	status, err := database.GetStudentStatusInfoByIdentityNumber(identityNumber)
+	if err != nil {
+		logrus.Errorf(constant.Service+"StudentApplyDegree Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+
+	if status.DefenseScore < 60 || status.BlindScore < 60 {
+		c.JSON(http.StatusOK, utils.GenSuccessResponse(1, "成绩不合格,申请失败", nil))
+		return
+	}
+
+	err = database.UpdateApplyDegree(identityNumber, 1)
+	if err != nil {
+		logrus.Errorf(constant.Service+"StudentApplyDegree Failed, err= %v", err)
+		c.Error(exception.ServerError())
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", nil))
 }

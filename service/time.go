@@ -19,7 +19,7 @@ func GetCurrentTime(c *gin.Context) {
 func PostCurrentTime(c *gin.Context) {
 	params := make(map[string]interface{})
 	c.BindJSON(&params)
-	err := redis.SetCurrentTime(int64(params["current_time"].(float64)))
+	err := redis.SetCurrentTime(int64(params["currentTime"].(float64)))
 	if err != nil {
 		logrus.Errorf(constant.Service+"PostCurrentTime failed: %v", err)
 		return

@@ -97,3 +97,13 @@ func UpdateDegreeConfirmed(identityNumber string, degreeConfirmed int64) error {
 	}
 	return nil
 }
+
+func UpdateApplyDegree(identityNumber string, applyDegree int64) error {
+	if err := mysql.GetMySQLClient().Model(&StudentStatusInfo{}).Where("identity_number = ?", identityNumber).Updates(map[string]interface{}{
+		"apply_degree": applyDegree,
+	}).Error; err != nil {
+		logrus.Errorf(constant.DAO+"UpdateApplyDegree Failed, err= %v", err)
+		return err
+	}
+	return nil
+}
