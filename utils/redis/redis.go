@@ -4,28 +4,42 @@ import (
 	"context"
 	"github.com/go-redis/redis/v8"
 	"postgraduate-pm-backend/utils/helper"
+	"postgraduate-pm-backend/utils/zookeeper"
 	"time"
 )
 
 const (
-	redis_address  = "124.221.197.218:6379"
-	redis_password = "ecnusyh"
-	redis_network  = "tcp"
-	expire_time    = time.Hour * 12
-	online_prefix  = "Online_Account_"
-	current_time   = "Current_Time"
+	expire_time   = time.Hour * 12
+	online_prefix = "Online_Account_"
+	current_time  = "Current_Time"
 )
+
+type RedisConfig struct {
+	redisAddress  string `json:"redisAddress"`
+	redisPassword string `json:"redisPassword"`
+	redisNetwork  string `json:"redisNetwork"`
+	expireTime    int64  `json:"expireTime"`
+}
+
+var config *RedisConfig
 
 var client *redis.Client
 var ctx = context.Background()
 
-func RedisInit() {
+func RedisInit() error {
+	var err error
+	config = &RedisConfig{}
+	err = zookeeper.GetUtilsConfig("/redis", config)
+	if err != nil {
+		return err
+	}
 	client = redis.NewClient(&redis.Options{
-		Addr:     redis_address,
-		Password: redis_password,
-		Network:  redis_network,
+		Addr:     config.redisAddress,
+		Password: config.redisPassword,
+		Network:  config.redisNetwork,
 		DB:       1, // 仓库编号
 	})
+	return nil
 }
 
 func GetRedisClient() *redis.Client {

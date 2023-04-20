@@ -8,20 +8,30 @@ import (
 	"mime/multipart"
 	"path/filepath"
 	"postgraduate-pm-backend/utils/helper"
+	"postgraduate-pm-backend/utils/zookeeper"
 )
 
-const (
-	endpoint  = "124.221.197.218:9000"
-	accessKey = "minioadmin"
-	secretKey = "minioadmin"
-)
+type MinioConfig struct {
+	Endpoint  string `json:"endPoint"`
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+}
+
+var config *MinioConfig
 
 var client *minio.Client
 
 func MinioInit() error {
 	var err error
-	client, err = minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
+
+	config = &MinioConfig{}
+	err = zookeeper.GetUtilsConfig("/minio", config)
+	if err != nil {
+		return err
+	}
+
+	client, err = minio.New(config.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(config.AccessKey, config.AccessKey, ""),
 		Secure: false,
 	})
 	if err != nil {
@@ -70,7 +80,7 @@ func UploadFile(bucketName string, fileHeader *multipart.FileHeader) (string, er
 		return "", err
 	}
 	// fmt.Printf("Successfully uploaded %s to %s/%s\n", fileHeader.Filename, bucketName, objectName)
-	url := fmt.Sprintf("http://%s/%s/%s", endpoint, bucketName, objectName)
+	url := fmt.Sprintf("http://%s/%s/%s", config.Endpoint, bucketName, objectName)
 	return url, nil
 }
 

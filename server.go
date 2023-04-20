@@ -13,6 +13,7 @@ import (
 	"postgraduate-pm-backend/utils/redis"
 	"postgraduate-pm-backend/utils/sessions"
 	"postgraduate-pm-backend/utils/snowflake"
+	"postgraduate-pm-backend/utils/zookeeper"
 )
 
 var r *gin.Engine
@@ -64,7 +65,15 @@ func main() {
 
 	httpHandlerInit()
 
-	redis.RedisInit()
+	if err := zookeeper.ZookeeperInit(); err != nil {
+		logrus.Errorf(constant.Main+"Init Zookeeper Failed, err= %v", err)
+		return
+	}
+
+	if err := redis.RedisInit(); err != nil {
+		logrus.Errorf(constant.Main+"Init Redis Failed, err= %v", err)
+		return
+	}
 
 	if err := minio.MinioInit(); err != nil {
 		logrus.Errorf(constant.Main+"Init Minio Failed, err= %v", err)

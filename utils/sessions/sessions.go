@@ -4,26 +4,35 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/boj/redistore.v1"
 	"postgraduate-pm-backend/database"
+	"postgraduate-pm-backend/utils/zookeeper"
 )
 
 var client *redistore.RediStore
 
-const (
-	redis_address   = "124.221.197.218:6379"
-	redis_password  = "ecnusyh"
-	redis_network   = "tcp"
-	redis_size      = 10
-	redis_secretkey = "secret key"
-	redis_maxage    = 12 * 60 * 60
-)
+type SessionsConfig struct {
+	RedisAddress   string `json:"redisAddress"`
+	RedisPassword  string `json:"redisPassword"`
+	RedisNetwork   string `json:"redisNetwork"`
+	RedisSize      int    `json:"redisSize"`
+	RedisSecretKey string `json:"redisSecretKey"`
+	RedisMaxAge    int    `json:"redisMaxAge"`
+}
+
+var config *SessionsConfig
 
 func SessionInit() error {
 	var err error
-	client, err = redistore.NewRediStore(redis_size, redis_network, redis_address, redis_password, []byte(redis_secretkey))
+	config = &SessionsConfig{}
+	err = zookeeper.GetUtilsConfig("/sessions", config)
 	if err != nil {
 		return err
 	}
-	client.SetMaxAge(redis_maxage)
+
+	client, err = redistore.NewRediStore(config.RedisSize, config.RedisNetwork, config.RedisAddress, config.RedisPassword, []byte(config.RedisSecretKey))
+	if err != nil {
+		return err
+	}
+	client.SetMaxAge(config.RedisMaxAge)
 	return nil
 }
 
