@@ -145,6 +145,7 @@ func GetStudentFileInfo(c *gin.Context) {
 		IdentityNumber:                        info.IdentityNumber,
 		FirstDraft:                            info.FirstDraft,
 		PreliminaryReviewForm:                 info.PreliminaryReviewForm,
+		ResearchEvaluationMaterial:            info.ResearchEvaluationMaterial,
 		IsFirstDraftConfirmed:                 info.IsFirstDraftConfirmed,
 		IsPreliminaryReviewFormConfirmed:      info.IsPreliminaryReviewFormConfirmed,
 		IsFirstDraftSubmitted:                 info.IsFirstDraftSubmitted,
