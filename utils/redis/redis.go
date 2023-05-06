@@ -15,10 +15,10 @@ const (
 )
 
 type RedisConfig struct {
-	redisAddress  string `json:"redisAddress"`
-	redisPassword string `json:"redisPassword"`
-	redisNetwork  string `json:"redisNetwork"`
-	expireTime    int64  `json:"expireTime"`
+	RedisAddress  string `json:"redisAddress"`
+	RedisPassword string `json:"redisPassword"`
+	RedisNetwork  string `json:"redisNetwork"`
+	ExpireTime    int64  `json:"expireTime"`
 }
 
 var config *RedisConfig
@@ -34,9 +34,9 @@ func RedisInit() error {
 		return err
 	}
 	client = redis.NewClient(&redis.Options{
-		Addr:     config.redisAddress,
-		Password: config.redisPassword,
-		Network:  config.redisNetwork,
+		Addr:     config.RedisAddress,
+		Password: config.RedisPassword,
+		Network:  config.RedisNetwork,
 		DB:       1, // 仓库编号
 	})
 	return nil
