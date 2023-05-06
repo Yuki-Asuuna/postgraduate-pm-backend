@@ -58,6 +58,7 @@ func AdminGetStudentList(c *gin.Context) {
 			DefenseScore:                          stu.DefenseScore,
 			DegreeConfirmed:                       helper.I2B(stu.DegreeConfirmed),
 			ApplyDegree:                           helper.I2B(stu.ApplyDegree),
+			SupervisorID:                          stu.SupervisorID,
 		})
 	}
 	c.JSON(http.StatusOK, utils.GenSuccessResponse(0, "OK", result))
